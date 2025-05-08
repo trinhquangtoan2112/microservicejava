@@ -1,0 +1,26 @@
+services:
+  mysql:
+    image: mysql
+    container_name: mysql123
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: admin
+      MYSQL_DATABASE: database123
+      MYSQL_USER: toan2002
+      MYSQL_PASSWORD: toan2002
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./mysql:/var/lib/mysql
+  neo4j:
+    image: neo4j
+    container_name: neo4j123
+    restart: always
+    environment:
+      NEO4J_AUTH: "neo4j/Quangtoan2112"
+    ports:
+      - "7474:7474"
+      - "7687:7687"
+volumes:
+  db_data:
+

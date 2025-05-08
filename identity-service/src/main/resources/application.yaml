@@ -1,14 +1,13 @@
 server:
   port: 8080
-  servlet:
-    context-path: /identity
+
 
 spring:
   datasource:
-    url: "jdbc:mysql://localhost:3306/bookteria_identity"
+    url: "jdbc:mysql://localhost:3306/database123"
     driverClassName: "com.mysql.cj.jdbc.Driver"
-    username: root
-    password: root
+    username: toan2002
+    password: toan2002
   jpa:
     hibernate:
       ddl-auto: update
