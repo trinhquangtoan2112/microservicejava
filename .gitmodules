@@ -1,0 +1,6 @@
+[submodule "bookteria"]
+	path = bookteria
+	url = https://github.com/devteria/bookteria.git
+[submodule "submodule-folder"]
+	path = submodule-folder
+	url = https://github.com/devteria/bookteria.git

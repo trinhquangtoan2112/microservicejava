@@ -4,8 +4,10 @@ import java.util.HashSet;
 import java.util.List;
 
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 
 import com.devteria.identity.constant.PredefinedRole;
@@ -80,20 +82,29 @@ public class UserService {
         return userMapper.toUserResponse(userRepository.save(user));
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN') #userId == authentication.principal.claims['userId']")
     public void deleteUser(String userId) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
         userRepository.deleteById(userId);
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public List<UserResponse> getUsers() {
         log.info("In method get Users");
-        return userRepository.findAll().stream().map(userMapper::toUserResponse).toList();
-    }
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        boolean flag = false;
+        if (authentication != null && authentication.getPrincipal() instanceof Jwt) {
+            Jwt jwt = (Jwt) authentication.getPrincipal();
+            String userId = jwt.getClaimAsString("userId"); // Hoặc "sub"
+            if (userId != null) {
+                flag = true;
+                log.info("User ID from JWT: {}", userId);
+            } else {
+                log.warn("No userId found in JWT claims");
+            }
+        }
 
-    @PreAuthorize("hasRole('ADMIN')")
-    public UserResponse getUser(String id) {
-        return userMapper.toUserResponse(
-                userRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED)));
+        return userRepository.findAll().stream().map(userMapper::toUserResponse).toList();
     }
 }
